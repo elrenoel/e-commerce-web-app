@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+body{
+    font-family: "Plus Jakarta Sans", sans-serif;
+    font-optical-sizing: auto;
+}
+
+.container{
+    width: 90%;
+    margin: auto;
+}
+
+.bg-org{
+    background-color: #ff5252;
+}
+
+.link:hover{
+    color: #ff5252;
+}
