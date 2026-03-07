@@ -1,4 +1,4 @@
-import {Router} from "express";
+import { Router } from "express";
 import { createCategory, getCategories } from "../controllers/category.controller.js";
 import { authMiddleware, authorize } from "../middlewares/auth.middleware.js";
 
