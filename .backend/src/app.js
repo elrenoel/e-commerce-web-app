@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route.js";
 import { authMiddleware, authorize } from "./middlewares/auth.middleware.js";
 import categoryRoute from "./routes/category.route.js";
 import productRoute from "./routes/product.route.js";
+import cartRoute from "./routes/cart.route.js";
 
 dotenv.config();
 
@@ -15,6 +16,15 @@ const PORT = process.env.PORT || 3000;
 // middleware
 app.use(cors());
 app.use(express.json());
+
+// endpoint
+app.use("/api/v1/cart", cartRoute)
+
+app.use("/api/v1/products", productRoute);
+
+app.use("/api/v1/categories", categoryRoute);
+
+app.use("/api/v1/auth", authRoutes);
 
 app.get("/api/v1/dashboard", authMiddleware, authorize("customer"), (req, res) => {
   res.json({
@@ -36,12 +46,6 @@ app.get("/api/v1/me", authMiddleware, (req, res) => {
     user: req.user,
   });
 });
-
-app.use("/api/v1/products", productRoute);
-
-app.use("/api/v1/categories", categoryRoute);
-
-app.use("/api/v1/auth", authRoutes);
 
 app.get("/api/v1", (req, res) => {
   res.status(200).json({

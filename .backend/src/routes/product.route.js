@@ -16,13 +16,13 @@ productRoute.post("/", authMiddleware, authorize("admin"), createProduct);
 // Create Variants Product (Only Admin)
 productRoute.post("/:productId/variants", authMiddleware, authorize("admin"), createProductVariant);
 
-// Edit Product (Only Admin)
+// Update Product (Only Admin)
 productRoute.patch("/:id", authMiddleware, authorize("admin"), updateProduct);
 
 // Soft Delete Product (Only Admin)
 productRoute.delete("/:id", authMiddleware, authorize("admin"), deleteProduct);
 
-// Edit Product Variant (Only Admin)
+// Update Product Variant (Only Admin)
 productRoute.patch("/variants/:id", authMiddleware, authorize("admin"), updateProductVariant);
 
 // Soft Delete Product Variant (Only Admin)
