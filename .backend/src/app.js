@@ -7,6 +7,7 @@ import { authMiddleware, authorize } from "./middlewares/auth.middleware.js";
 import categoryRoute from "./routes/category.route.js";
 import productRoute from "./routes/product.route.js";
 import cartRoute from "./routes/cart.route.js";
+import orderRoute from "./routes/order.route.js";
 
 dotenv.config();
 
@@ -18,7 +19,9 @@ app.use(cors());
 app.use(express.json());
 
 // endpoint
-app.use("/api/v1/cart", cartRoute)
+app.use("/api/v1/orders", orderRoute);
+
+app.use("/api/v1/cart", cartRoute);
 
 app.use("/api/v1/products", productRoute);
 
