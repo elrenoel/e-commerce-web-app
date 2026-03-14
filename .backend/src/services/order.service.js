@@ -55,13 +55,20 @@ export const OrderCheckoutService = async (
         throw new Error("Variant not active");
       }
 
-      if (variant.stock < item.quantity) {
+      const updateStock = await ProductVariant.updateOne(
+        {
+          _id: variant._id,
+          stock: { $gte: item.quantity }, // check stock langsung di DB
+        },
+        {
+          $inc: { stock: -item.quantity }, // atomic decrement
+        },
+        { session },
+      );
+
+      if (updateStock.modifiedCount === 0) {
         throw new Error("Stock not enough");
       }
-
-      // update stock
-      variant.stock -= item.quantity;
-      await variant.save({ session });
 
       const price = variant.price;
       subtotal += price * item.quantity;
