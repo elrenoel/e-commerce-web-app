@@ -1,15 +1,21 @@
-import React from "react";
-import Header from "./component/Header";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ProtectedRoute from "./ProtectedRoute";
 
 const App = () => {
   return ( 
     <>
       <BrowserRouter>
         <Routes>
-          <Route path={"/"} exact={true} element={<Login />}/>
+          <Route path={"/login"} exact={true} element={<Login />}/>
+          <Route path={"/register"} exact={true} element={<Register />}/>
+          <Route path={"/"} element={<Dashboard />}/>
+
+          <Route element={<ProtectedRoute />}>
+            <Route path={"/"} element={<Dashboard />}/>
+          </Route>
         </Routes>
       </BrowserRouter>
     </>

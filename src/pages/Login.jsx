@@ -1,13 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { login } from "../api/authAPI";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const userRef = useRef();
-  const errRef = useRef();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errMsg, setErrMsg] = useState("");
-  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     userRef.current.focus();
@@ -17,14 +16,9 @@ const Login = () => {
     setErrMsg("");
   }, [formData]);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post(login, formData);
-    } catch (err) {
-      const msg = err.response?.data?.message;
-      setErrMsg(msg);
-    }
+    await login(formData, setErrMsg, navigate);
   };
 
   return (
@@ -32,7 +26,7 @@ const Login = () => {
       <div className="h-full py-[5%]">
         <form
           className="px-10 flex flex-col gap-2 min-w-112.5"
-          onSubmit={handleSubmit}
+          onSubmit={handleLogin}
         >
           <h1 className="text-center text-4xl font-bold">Cocoa</h1>
           <p className="text-center">Sign in to your account</p>
@@ -63,7 +57,9 @@ const Login = () => {
             }
             required
           />
-          {errMsg.length > 0 ? <p className="text-center text-red-500">{errMsg}</p> : null}
+          {errMsg !== "" ? (
+            <p className="text-center text-red-500">{errMsg}</p>
+          ) : null}
           <button
             className="mt-3 bg-black min-h-10 rounded text-white"
             type="submit"
@@ -71,7 +67,10 @@ const Login = () => {
             Sign In
           </button>
         </form>
-        <p className="hover:underline text-blue-600 text-center mt-2">
+        <p 
+          className="hover:underline text-blue-600 text-center mt-2"
+          onClick={() => navigate('/register')}
+        >
           Create an account
         </p>
       </div>

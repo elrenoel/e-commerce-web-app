@@ -9,9 +9,9 @@ export const register = async (req, res, next) => {
 
     // cek field yang diisi required semua
     if (!name || !email || !password || !phone) {
-      const err = new Error("All fields are required");
-      err.statusCode = 400;
-      throw err;
+      return res.status(400).json({
+        message: "All fields are required!",
+      });
     }
 
     // cek email nya sudah ada/belum
@@ -50,56 +50,55 @@ export const register = async (req, res, next) => {
   }
 };
 
-export const login = async (req, res, next) =>{
- try {
-  const {email, password} = req.body
-  
-  if(!email || !password){
-    const err = new Error("Email and password are required");
-    err.statusCode = 400;
-    throw err;
-  }
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
 
-  const user = await User.findOne({email}).select("+password")
-
-  if(!user){
-    const err = new Error("Invalid email or password");
-    err.statusCode = 400;
-    throw err;
-  }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-
-  if(!isMatch){
-    const err = new Error("Invalid email or password");
-    err.statusCode = 400;
-    throw err;
-  }
-
-  const token = jwt.sign(
-    {
-      userId : user._id, 
-      role: user.role
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: process.env.JWT_EXPIRES,
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "All fields are required!",
+      });
     }
-  );
 
-  return res.status(200).json({
-    message: "Login Success",
-    token,
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      phone: user.phone,
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      const err = new Error("Invalid email or password");
+      err.statusCode = 400;
+      throw err;
     }
-  });
 
- } catch (error) {
-  next(error)
- }
-}
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      const err = new Error("Invalid email or password");
+      err.statusCode = 400;
+      throw err;
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        role: user.role,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES,
+      },
+    );
+
+    return res.status(200).json({
+      message: "Login Success",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        phone: user.phone,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

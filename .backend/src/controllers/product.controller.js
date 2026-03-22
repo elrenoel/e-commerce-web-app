@@ -97,16 +97,34 @@ export const getProducts = async (req, res, next) => {
 
     // console.log("FILTER:", filter);
 
-    const products = await Product.find(filter)
-      .populate("category", "name slug")
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limitNumber);
+    // Gantilah query Product.find() kamu dengan ini:
+    const products = await Product.aggregate([
+      { $match: filter }, // Filter isActive, search, dll
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limitNumber },
+      {
+        $lookup: {
+          from: "productvariants", // Nama COLLECTION di MongoDB (biasanya huruf kecil & jamak)
+          localField: "_id",
+          foreignField: "productId",
+          as: "variants",
+        },
+      },
+      {
+        $addFields: {
+          minPrice: {
+            $ifNull: [{ $min: "$variants.price" }, 0],
+          },
+        },
+      },
+    ]);
 
+    // Dengan Aggregate, data minPrice sudah langsung ada di tiap object.
     return res.status(200).json({
       message: "Products fetched successfully",
       total: products.length,
-      data: products,
+      data: products, // Langsung kirim, tidak perlu .map lagi
     });
   } catch (error) {
     console.error(error);
@@ -383,9 +401,9 @@ export const deleteProductVariant = async (req, res, next) => {
     );
 
     return res.status(200).json({
-      message: 'Delete Product Variant Successfully',
+      message: "Delete Product Variant Successfully",
       data: productVariant,
-    })
+    });
   } catch (error) {
     console.error(error);
     next(error);

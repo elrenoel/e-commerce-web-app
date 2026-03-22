@@ -53,10 +53,17 @@ const productSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   },
 );
 
 productSchema.index({ category: 1 });
+productSchema.virtual("variants", {
+  ref: "ProductVariant", 
+  localField: "_id", 
+  foreignField: "productId",
+});
 
 const Product = mongoose.model("Product", productSchema);
 
