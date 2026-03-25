@@ -132,6 +132,71 @@ export const getProducts = async (req, res, next) => {
   }
 };
 
+export const getAllProducts = async (req, res, next) => {
+  try {
+    const { page = 1, limit = 10, category, search, featured } = req.query;
+
+    const pageNumber = parseInt(page);
+    const limitNumber = parseInt(limit);
+    const skip = (pageNumber - 1) * limitNumber;
+
+    const filter = {};
+
+    if (featured) {
+      filter.isFeatured = featured === "true";
+    }
+
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    if (category) {
+      // console.log("category query:", category);
+      const categoryDoc = await Category.findOne({ slug: category });
+      // console.log("categoryDoc:", categoryDoc);
+
+      if (categoryDoc) {
+        filter.category = categoryDoc._id;
+      }
+    }
+
+    // console.log("FILTER:", filter);
+
+    // Gantilah query Product.find() kamu dengan ini:
+    const products = await Product.aggregate([
+      { $match: filter }, // Filter isActive, search, dll
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limitNumber },
+      {
+        $lookup: {
+          from: "productvariants", // Nama COLLECTION di MongoDB (biasanya huruf kecil & jamak)
+          localField: "_id",
+          foreignField: "productId",
+          as: "variants",
+        },
+      },
+      {
+        $addFields: {
+          minPrice: {
+            $ifNull: [{ $min: "$variants.price" }, 0],
+          },
+        },
+      },
+    ]);
+
+    // Dengan Aggregate, data minPrice sudah langsung ada di tiap object.
+    return res.status(200).json({
+      message: "Products fetched successfully",
+      total: products.length,
+      data: products, // Langsung kirim, tidak perlu .map lagi
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};
+
 export const createProductVariant = async (req, res, next) => {
   try {
     const { productId } = req.params;

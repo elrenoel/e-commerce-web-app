@@ -3,6 +3,7 @@ import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./ProtectedRoute";
+import Admin from "./pages/Admin";
 
 const App = () => {
   return ( 
@@ -12,6 +13,8 @@ const App = () => {
           <Route path={"/login"} exact={true} element={<Login />}/>
           <Route path={"/register"} exact={true} element={<Register />}/>
           <Route path={"/"} element={<Dashboard />}/>
+          <Route path={"/admin"} element={<Admin />}/>
+
 
           <Route element={<ProtectedRoute />}>
             <Route path={"/"} element={<Dashboard />}/>

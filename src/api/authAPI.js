@@ -1,17 +1,18 @@
-import axios from "axios";
-
-const baseURL = import.meta.env.VITE_URL_API;
+import { api } from "./config";
 
 export const login = async (formData, setErrMsg, navigate) => {
-  const endPoint = `${baseURL}/auth/login`;
-
   try {
-    const res = await axios.post(endPoint, formData);
+    const res = await api.post('/auth/login', formData);
 
     if (res.status === 200) {
       localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user_role", res.data.user.role);
 
-      navigate("/", { replace: true });
+      if (res.data.user.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else {
+        navigate("/", { replace: true });
+      }
     }
   } catch (err) {
     if (err.response) {
@@ -23,4 +24,5 @@ export const login = async (formData, setErrMsg, navigate) => {
     }
   }
 };
-export const register = `${baseURL}/auth/register`;
+
+export const register = async () =>{};

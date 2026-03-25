@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
-import { getAllProducts } from "../api/productsAPI";
+import { getAllProducts, getProducts } from "../api/productsAPI";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useProductAction } from "../hooks/useProductsAction";
 
 const ListProducts = () => {
-  const [products, setProducts] = useState([]);
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("user_role");
+  const navigate = useNavigate();
 
-  useEffect( () => {
-    handleGetAllProducts();
-  }, []);
+  const {products, loading, toggleStatus} = useProductAction();
 
-  const handleGetAllProducts = async () =>{
-    await getAllProducts(setProducts);
-    console.log(products);
-  }
+  const handleAddtoCart = (e) => {
+    e.prevenDefault;
+    if (!token) {
+      navigate("/login");
+    }
+  };
+
+  if(loading) return <div>Loading products...</div>;
 
   return (
     <div className="w-[90%] max-w-300 mx-auto">
@@ -25,7 +32,9 @@ const ListProducts = () => {
           >
             <div className="aspect-square overflow-hidden bg-gray-100">
               <img
-                src={product.coverImage ? product.coverImage : "placeholder.png"}
+                src={
+                  product.coverImage ? product.coverImage : "placeholder.png"
+                }
                 alt="Product"
                 className="w-full h-full object-cover hover:scale-105 transition-transform"
               />
@@ -40,11 +49,31 @@ const ListProducts = () => {
                 Rp.{product.minPrice}
               </p>
 
-              <div className="mt-3">
-                <button className="w-full border border-gray-300 text-gray-700 py-1.5 rounded-sm hover:bg-blue-50 text-sm font-medium transition-colors">
-                  Add to Cart
-                </button>
-              </div>
+              {role === "admin" ? (
+                <label className="inline-flex items-center cursor-pointer mt-3">
+                  <input
+                    type="checkbox"
+                    checked={product.isActive}
+                    onChange={(e) =>
+                      toggleStatus(product._id, e.target.checked)
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="relative w-9 h-5 bg-gray-400 peer-focus:outline-none peer-focus:ring-brand-soft dark:peer-focus:ring-brand-soft rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-buffer after:content-[''] after:absolute after:top-0.5 after:inset-s-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-800"></div>
+                  <span className="select-none ms-3 text-sm font-medium text-heading">
+                    {product.isActive ? "Available" : "Not Available"}
+                  </span>
+                </label>
+              ) : (
+                <div className="mt-3">
+                  <button
+                    className="w-full border border-gray-300 text-gray-700 py-1.5 rounded-sm hover:bg-blue-50 text-sm font-medium transition-colors"
+                    onClick={handleAddtoCart}
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}

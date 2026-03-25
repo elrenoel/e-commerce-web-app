@@ -1,23 +1,12 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { getCategories } from "../api/categoriesAPI";
+import { useCategoriesAction } from "../hooks/useCategoriesAction";
 
 const CategoriesSidebar = () => {
-  const [categories, setCategories] = useState([]);
   const style =
     "hover:bg-gray-200 cursor-pointer text-center py-2 px-2 rounded";
 
-  useEffect(() => {
-    handleGetCategories();
-  }, []);
+  const { categories, loading } = useCategoriesAction();
 
-  const handleGetCategories = async () => {
-    await getCategories(setCategories);
-  };
-
-  const handleGetProductsByCategory = (categoryName) => {
-    console.log(categoryName);
-  };
+  if (loading) return <div>Loading Categories...</div>;
 
   return (
     <div className="w-[15%]">
