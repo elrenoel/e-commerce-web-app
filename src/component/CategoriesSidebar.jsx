@@ -6,6 +6,10 @@ const CategoriesSidebar = () => {
 
   const { categories, loading } = useCategoriesAction();
 
+  const handleGetProductsByCategory = (categoryName) => {
+    console.log("Filter by category:", categoryName);
+  };
+
   if (loading) return <div>Loading Categories...</div>;
 
   return (

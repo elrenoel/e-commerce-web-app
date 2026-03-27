@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
 import { register } from "../api/authAPI";
@@ -25,17 +24,11 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(register, formData);
+      await register(formData);
 
       navigate("/login", { replace: true });
     } catch (err) {
-      if (err.response) {
-        setErrMsg(err.response.data.message);
-      } else if (err.request) {
-        setErrMsg("No server response. Please try again later.");
-      } else {
-        setErrMsg("An error occurred. Please try again.");
-      }
+      setErrMsg(err.message);
     }
   };
 
@@ -77,7 +70,7 @@ const Register = () => {
             autoComplete="off"
             required
             onChange={(e) =>
-              setFormData({ ...formData, phone: toString(e.target.value) })
+              setFormData({ ...formData, phone: String(e.target.value) })
             }
           />
           <label className="flex flex-col gap-2 mt-3">Password</label>

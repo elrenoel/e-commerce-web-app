@@ -8,6 +8,7 @@ const Admin = () => {
 
   const handleLogOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("user_role");
     navigate("/login", { replace: true });
   };
 

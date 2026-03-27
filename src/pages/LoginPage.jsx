@@ -18,7 +18,14 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login(formData, setErrMsg, navigate);
+    try {
+      const { user } = await login(formData);
+
+      const path = user.role === "admin" ? "/admin" : "/";
+      navigate(path, { replace: true });
+    } catch (err) {
+      setErrMsg(err.message);
+    } 
   };
 
   return (
@@ -67,9 +74,9 @@ const Login = () => {
             Sign In
           </button>
         </form>
-        <p 
+        <p
           className="hover:underline text-blue-600 text-center mt-2"
-          onClick={() => navigate('/register')}
+          onClick={() => navigate("/register")}
         >
           Create an account
         </p>

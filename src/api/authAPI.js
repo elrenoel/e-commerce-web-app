@@ -1,28 +1,33 @@
 import { api } from "./config";
 
-export const login = async (formData, setErrMsg, navigate) => {
+export const login = async (formData) => {
   try {
-    const res = await api.post('/auth/login', formData);
+    const res = await api.post("/auth/login", formData);
 
-    if (res.status === 200) {
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user_role", res.data.user.role);
+    const { token, user } = res.data;
 
-      if (res.data.user.role === "admin") {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
-    }
+    localStorage.setItem("token", token);
+    localStorage.setItem("user_role", user.role);
+
+    return { success: true, user };
   } catch (err) {
-    if (err.response) {
-      setErrMsg(err.response.data.message);
-    } else if (err.request) {
-      setErrMsg("No server response. Please try again later.");
-    } else {
-      setErrMsg("An error occurred. Please try again.");
-    }
+    const message =
+      err.response?.data?.message ||
+      (err.request ? "Server tidak merespons" : "Terjadi kesalahan sistem");
+
+    throw new Error(message);
   }
 };
 
-export const register = async () =>{};
+export const register = async (formData) => {
+  try {
+    const res = await api.post("/auth/register", formData);
+    return res.data;
+  } catch (err) {
+    const message =
+      err.response?.data?.message ||
+      (err.request ? "Server tidak merespons" : "Terjadi kesalahan sistem");
+
+    throw new Error(message);
+  }
+};
