@@ -14,3 +14,8 @@ export const updateProduct = async (id, data) => {
   const res = await api.patch(`/products/${id}`, data);
   return res.data.data;
 };
+
+export const getProductDetail = async(slug) =>{
+  const res = await api.get(`/products/${slug}`);
+  return res.data.data;
+}

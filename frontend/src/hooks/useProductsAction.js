@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
-import { getAllProducts, getProducts, updateProduct } from "../api/productsAPI";
+import { getAllProducts, getProductDetail, getProducts, updateProduct } from "../api/productsAPI";
 
 export const useProductAction = (role) => {
   const [products, setProducts] = useState([]);
+  const [productDetail, setProductDetail] = useState({});
   const [loading, setLoading] = useState(false);
 
   const fetchProducts = useCallback(async () => {
@@ -36,5 +37,15 @@ export const useProductAction = (role) => {
     }
   };
 
-  return { products, loading, refetch: fetchProducts, toggleStatus };
+  const fetchProductDetail = async (slug) =>{
+    try {
+      const data = await getProductDetail(slug);
+
+      setProductDetail(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return { products, productDetail, loading, refetch: fetchProducts, toggleStatus , fetchProductDetail};
 };

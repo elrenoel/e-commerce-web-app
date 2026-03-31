@@ -1,13 +1,13 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
-import authRoutes from "./routes/auth.route.js";
-import { authMiddleware, authorize } from "./middlewares/auth.middleware.js";
-import categoryRoute from "./routes/category.route.js";
-import productRoute from "./routes/product.route.js";
-import cartRoute from "./routes/cart.route.js";
-import orderRoute from "./routes/order.route.js";
+import { connectDB } from "./src/config/db.js";
+import authRoutes from "./src/routes/auth.route.js";
+import { authMiddleware, authorize } from "./src/middlewares/auth.middleware.js";
+import categoryRoute from "./src/routes/category.route.js";
+import productRoute from "./src/routes/product.route.js";
+import cartRoute from "./src/routes/cart.route.js";
+import orderRoute from "./src/routes/order.route.js";
 
 dotenv.config();
 
@@ -73,3 +73,5 @@ connectDB().then(() => {
     console.log(`Server running on http://localhost:${PORT}/api/v1`);
   });
 });
+
+export default app;

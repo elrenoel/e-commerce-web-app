@@ -7,7 +7,7 @@ const ListProducts = () => {
   const role = localStorage.getItem("user_role");
   const navigate = useNavigate();
 
-  const { products, loading, toggleStatus } = useProductAction();
+  const { products, loading, toggleStatus } = useProductAction(role);
 
   const handleAddtoCart = (e) => {
     e.preventDefault();
@@ -34,7 +34,7 @@ const ListProducts = () => {
                   product.coverImage ? product.coverImage : "placeholder.png"
                 }
                 alt="Product"
-                className="w-full h-full object-cover hover:scale-105 transition-transform"
+                className="w-full h-full object-contain hover:scale-105 transition-transform"
               />
             </div>
 
@@ -51,7 +51,7 @@ const ListProducts = () => {
                 <div className="mt-3">
                   <button
                     className="flex items-center justify-center gap-0.5 w-full border px-5 border-gray-300 text-gray-700 py-1.5 rounded-sm text-sm font-medium"
-                    onClick={() => navigate(`/products/${product._id}/edit`)}
+                    onClick={() => navigate(`/products/${product.slug}/edit`)}
                   >
                     <TbEditCircle size={18} />
                     Edit

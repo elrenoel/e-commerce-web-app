@@ -24,11 +24,17 @@ const Register = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await register(formData);
+      const res = await axios.post(register, formData);
 
       navigate("/login", { replace: true });
     } catch (err) {
-      setErrMsg(err.message);
+      if (err.response) {
+        setErrMsg(err.response.data.message);
+      } else if (err.request) {
+        setErrMsg("No server response. Please try again later.");
+      } else {
+        setErrMsg("An error occurred. Please try again.");
+      }
     }
   };
 
@@ -70,7 +76,7 @@ const Register = () => {
             autoComplete="off"
             required
             onChange={(e) =>
-              setFormData({ ...formData, phone: String(e.target.value) })
+              setFormData({ ...formData, phone: toString(e.target.value) })
             }
           />
           <label className="flex flex-col gap-2 mt-3">Password</label>

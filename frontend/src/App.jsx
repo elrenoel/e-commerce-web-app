@@ -17,7 +17,7 @@ const App = () => {
 
           <Route element={<ProtectedRoute allowedRoles={'admin'}/>}>
             <Route path="/admin" element={<Admin />} />
-            <Route path="/products/:id/edit" element={<EditProduct />} />
+            <Route path="/products/:slug/edit" element={<EditProduct />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />
